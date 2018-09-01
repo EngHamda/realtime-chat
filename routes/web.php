@@ -20,6 +20,20 @@ Route::view('chat', 'chat')->middleware('auth');
 //    return view('chat');
 //});
 
+Route::get('/message', function () {
+    //get messages from backend
+    return App\Message::with('user')->get();
+})->middleware('auth');
+
+Route::post('/message', function () {
+    //store new messag to backend
+    $user = Auth::user();
+    $user->messages()->create([
+        'message' => request()->get('message')
+    ]);
+    return ['status' => 200];
+})->middleware('auth');
+
 /*not-working*/
 //Route::get('/vue', function () {
 //    return view('vue');

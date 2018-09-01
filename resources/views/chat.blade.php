@@ -1,21 +1,17 @@
-<!doctype html>
-<html>
-    <head>
-        <meta charset="UTF-8" name="csrf-token" content="{{ csrf_token() }}">
-        {{--<meta name="csrf-token" content="{{ csrf_token() }}">--}}
-        <title>Chatroom</title>
-        <link rel="stylesheet" href="css/app.css">
-    </head>
-    <body>
-        <div id="app">
-            <h1>Chatroom</h1>
-            {{--<chat-message></chat-message>--}}
-            {{-- add prop for chat log as data be in app.js and pass data for chat-log --}}
-            <chat-log :messages="messages"></chat-log>
+@extends('layouts.app')
+@section('content')
+    <div class="container">
+        <div class="row">
+            {{--how know div #app--}}
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Chatroom</div>
 
-            <chat-composer @messagesent="addMessage"></chat-composer>
-            <example-component></example-component>
+                    {{-- add prop for chat log as data be in app.js and pass data for chat-log --}}
+                    <chat-log :messages="messages"></chat-log>
+                    <chat-composer v-on:messagesent="addMessage"></chat-composer>
+                </div>
+            </div>
         </div>
-        <script src="js/app.js" charset="UTF-8"></script>
-    </body>
-</html>
+    </div>
+@endsection

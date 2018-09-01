@@ -22,25 +22,51 @@ Vue.component('chat-composer', require('./components/chat-components/ChatCompose
 const app = new Vue({
     el: '#app',
     data(){
+        /*why can't remove this if i get data from backend*/
+        // moved from ChatLog to here
+        // then get from backend
         return {
             messages:[
                 {
                     "message":"y",
-                    "user":"y"
+                    "user":{"name":"y"}
                 },
                 {
                     "message":"x",
-                    "user":"x"
+                    "user":{"name":"x"}
                 }
             ]
         };
     },
     methods: {
         addMessage(message) {
-            console.log("in app: msg text is "+ message.message);
-            // Add to existing messages "chat-log"
-            this.messages.push(message);
+            console.log("new msg: "+ message.message);
             // Persist to the database etc
+            //get new message
+            axios.post('/message',message).then(response => {
+                //store message to backend
+                //log response data
+                console.log(response.data);
+                if (response.data.status === 200 ){
+                    // Add to existing messages "chat-log"
+                    this.messages.push(message);
+                } else{
+                    //error in console
+                    /**
+                     *  Error in render: "TypeError: Cannot read property 'name' of undefined"
+                     */
+                    // this.messages.push(message+ " Failed send");
+                }
+
+            });
         }
+    },
+    created() {
+        //get messages from backend
+        axios.get('/message').then(response => {
+            console.log(response.data);
+            //this line override messages data above
+            this.messages = response.data;
+        });
     }
 });

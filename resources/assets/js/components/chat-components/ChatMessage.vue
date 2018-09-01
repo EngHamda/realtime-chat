@@ -4,7 +4,7 @@
         <!--<p>{{ message }}</p>-->
         <!--<small>{{ user }}</small>-->
         <p>{{ messageData.message }}</p>
-        <small>{{ messageData.user }}</small>
+        <small>{{ messageData.user.name }}</small>
     </div>
 </template>
 

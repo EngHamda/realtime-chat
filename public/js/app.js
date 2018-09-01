@@ -1413,24 +1413,53 @@ Vue.component('chat-composer', __webpack_require__(55));
 var app = new Vue({
     el: '#app',
     data: function data() {
+        /*why can't remove this if i get data from backend*/
+        // moved from ChatLog to here
+        // then get from backend
         return {
             messages: [{
                 "message": "y",
-                "user": "y"
+                "user": { "name": "y" }
             }, {
                 "message": "x",
-                "user": "x"
+                "user": { "name": "x" }
             }]
         };
     },
 
     methods: {
         addMessage: function addMessage(message) {
-            console.log("in app: msg text is " + message.message);
-            // Add to existing messages "chat-log"
-            this.messages.push(message);
+            var _this = this;
+
+            console.log("new msg: " + message.message);
             // Persist to the database etc
+            //get new message
+            axios.post('/message', message).then(function (response) {
+                //store message to backend
+                //log response data
+                console.log(response.data);
+                if (response.data.status === 200) {
+                    // Add to existing messages "chat-log"
+                    _this.messages.push(message);
+                } else {
+                    //error in console
+                    /**
+                     *  Error in render: "TypeError: Cannot read property 'name' of undefined"
+                     */
+                    // this.messages.push(message+ " Failed send");
+                }
+            });
         }
+    },
+    created: function created() {
+        var _this2 = this;
+
+        //get messages from backend
+        axios.get('/message').then(function (response) {
+            console.log(response.data);
+            //this line override messages data above
+            _this2.messages = response.data;
+        });
     }
 });
 
@@ -43790,7 +43819,7 @@ var render = function() {
   return _c("div", { staticClass: "chat-message" }, [
     _c("p", [_vm._v(_vm._s(_vm.messageData.message))]),
     _vm._v(" "),
-    _c("small", [_vm._v(_vm._s(_vm.messageData.user))])
+    _c("small", [_vm._v(_vm._s(_vm.messageData.user.name))])
   ])
 }
 var staticRenderFns = []
@@ -43889,7 +43918,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.chat-log .chat-message:nth-child(even) {\n    background-color: #ccc;\n}\n", ""]);
+exports.push([module.i, "\n.chat-log .chat-message:nth-child(even) {\n    background-color: #ccc;\n}\n.empty {\n    padding: 1rem;\n    text-align: center;\n}\n", ""]);
 
 // exports
 
@@ -43918,22 +43947,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    //        data(){
-    //            return {
-    //                messages:[
-    //                    {
-    //                        "message":"y",
-    //                        "user":"y"
-    //                    },
-    //                    {
-    //                        "message":"x",
-    //                        "user":"x"
-    //                    }
-    //                ]
-    //            };
-    //        }
     props: ['messages']
 });
 
@@ -43948,12 +43966,31 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "chat-log" },
-    _vm._l(_vm.messages, function(messageData, messageIndex) {
-      return _c("chat-message", {
-        key: messageIndex,
-        attrs: { messageData: messageData, messageIndex: messageIndex }
-      })
-    })
+    [
+      _vm._l(_vm.messages, function(messageData, messageIndex) {
+        return _c("chat-message", {
+          key: messageIndex,
+          attrs: { messageData: messageData, messageIndex: messageIndex }
+        })
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.messages.length === 0,
+              expression: "messages.length === 0"
+            }
+          ],
+          staticClass: "empty"
+        },
+        [_vm._v("\n        Nothing here yet!\n    ")]
+      )
+    ],
+    2
   )
 }
 var staticRenderFns = []
@@ -44095,7 +44132,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
              */
             this.$emit('messagesent', {
                 message: this.messageText,
-                user: "Test user"
+                user: { "name":
+                    /**
+                     * get name from navbar
+                     * "Test user"
+                     */
+                    $('.navbar-right .dropdown-toggle').text()
+                }
             });
             this.messageText = '';
         }

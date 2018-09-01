@@ -29,7 +29,13 @@
                  */
                 this.$emit('messagesent', {
                     message: this.messageText,
-                    user: "Test user"
+                    user: {"name":
+                        /**
+                         * get name from navbar
+                         * "Test user"
+                         */
+                        $('.navbar-right .dropdown-toggle').text()
+                    }
                 });
                 this.messageText = '';
             }
