@@ -26,3 +26,7 @@ Route::view('chat', 'chat');
 //});
 //Route::view('vue', 'vue');
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
