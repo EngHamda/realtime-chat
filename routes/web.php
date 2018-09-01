@@ -11,6 +11,8 @@
 |
 */
 
+use App\Events\MessagePosted;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -28,9 +30,12 @@ Route::get('/message', function () {
 Route::post('/message', function () {
     //store new messag to backend
     $user = Auth::user();
-    $user->messages()->create([
+    $createdMessage = $user->messages()->create([
         'message' => request()->get('message')
     ]);
+    //new messageposted
+    broadcast(new MessagePosted($createdMessage,$user))->toOthers();
+
     return ['status' => 200];
 })->middleware('auth');
 

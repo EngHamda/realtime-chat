@@ -50,7 +50,7 @@ const app = new Vue({
                 if (response.data.status === 200 ){
                     // Add to existing messages "chat-log"
                     this.messages.push(message);
-                } else{
+                // } else{
                     //error in console
                     /**
                      *  Error in render: "TypeError: Cannot read property 'name' of undefined"
@@ -68,5 +68,35 @@ const app = new Vue({
             //this line override messages data above
             this.messages = response.data;
         });
+
+        //event
+        window.Echo.join('chatroom')
+            /**
+             * here
+             *      executed immediately once the channel is joined successfully,
+             *      and will receive an array containing the user information
+             *      for all of the other users currently subscribed to the channel.
+             * The joining
+             *      method will be executed when a new user joins a channel,
+             * while the leaving
+             *      method will be executed when a user leaves the channel.
+             */
+            // .here((users) => {
+            //         this.usersInRoom = users;
+            // })
+            // .joining((user) => {
+            //         this.usersInRoom.push(user);
+            // })
+            // .leaving((user) => {
+            //         this.usersInRoom = this.usersInRoom.filter(u => u != user)
+            // })
+            .listen('MessagePosted', (e) => {
+                console.log('Got event...');
+                //handle event
+                   this.messages.push({
+                    message: e.message.message,
+                    user: e.user
+                });
+            });
     }
 });
